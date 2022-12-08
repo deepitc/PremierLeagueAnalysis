@@ -74,5 +74,11 @@ Final_Data <-  AllStats21_22 %>%
   natural_join(AllStats15_16, by = c("Year","Squad"), jointype="FULL") %>%
   natural_join(AllStats11_12, by = c("Year","Squad"), jointype="FULL") 
 
+Final_Data <- Final_Data[, colSums(is.na(Final_Data))<nrow(Final_Data)]
+Final_Data <- Final_Data %>% replace(is.na(.), 0)
+
+
+
+
 
 
