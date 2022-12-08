@@ -4,6 +4,7 @@
 library(tidyr)
 library(dplyr)
 library(ggplot2)
+library(rqdatatable)
 
 # Loading Data
 #11-12
@@ -29,45 +30,49 @@ SquadStandardStats21_22 <- read.csv("SquadStandardStats21_22.csv")
 
 # Merging Data set
 
+
+mp <- natural_join(RegularSeason11_12, SquadGoalkeeping11_12, by = "Squad", jointype="FULL")
+
+
 #11-12
 AllStats11_12 <- RegularSeason11_12 %>%
-  full_join(SquadGoalkeeping11_12, by = "Squad") %>%
-  full_join(SquadPlayingTime11_12, by = "Squad") %>%
-  full_join(Squadshooting11_12, by = "Squad") %>%
-  full_join(SquadStandardStats11_12, by = "Squad") %>%
-  select(-X..x, -Starts.x, -Min.x, -X..y, -MP.x.x, -Min.y, -Min.y, -Min.,
-         -Starts.y, -Mn.Start, -Mn.Sub, -X..., -X..x.x, -Pl.x.x, -Gls.x, -SoT, -SoT, -SoT.,-SoT.90,
-         -G.SoT, -X..y.y, -Age.y, -Starts, -Min)
+  natural_join(SquadGoalkeeping11_12, by = "Squad", jointype="FULL") %>%
+  natural_join(SquadPlayingTime11_12, by = "Squad", jointype="FULL") %>%
+  natural_join(Squadshooting11_12, by = "Squad", jointype="FULL") %>%
+  natural_join(SquadStandardStats11_12, by = "Squad", jointype="FULL")
 
-AllStats11_12 <- AllStats11_12[-21,]
+AllStats11_12 <- AllStats11_12[, colSums(is.na(AllStats11_12))<nrow(AllStats11_12)]
+AllStats11_12 <- AllStats11_12[-1,]
+
 AllStats11_12$Year <- c("11/12")
 
 #15-16
 AllStats15_16 <- RegularSeason15_16 %>%
-  full_join(SquadGoalkeeping15_16, by = "Squad") %>%
-  full_join(SquadPlayingTime15_16, by = "Squad") %>%
-  full_join(Squadshooting15_16, by = "Squad") %>%
-  full_join(SquadStandardStats15_16, by = "Squad") %>%
-  select (-X..x, -MP.y, -Starts.x, -Min.x, -X90s.x, -X..y, -X90s.y, G.SoT.x, -X..x.x, 
-          -X90s.x.x, -G.SoT.y,-X..y.y, -Min.y, - X90s.y.y)
+  natural_join(SquadGoalkeeping15_16, by = "Squad",jointype="FULL") %>%
+  natural_join(SquadPlayingTime15_16, by = "Squad", jointype="FULL") %>%
+  natural_join(Squadshooting15_16, by = "Squad", jointype="FULL") %>%
+  natural_join(SquadStandardStats15_16, by = "Squad", jointype="FULL")
 
-AllStats15_16 <- AllStats15_16[-21,]
-AllStats15_16$Year <- c("15/16")
+  AllStats15_16 <- AllStats15_16[, colSums(is.na(AllStats15_16))<nrow(AllStats15_16)]
+  AllStats15_16 <- AllStats15_16[-1,]
+  AllStats15_16$Year <- c("15/16")
 
 #21-22
 AllStats21_22 <- RegularSeason21_22 %>%
-  full_join(SquadGoalkeeping21_22, by = "Squad") %>%
-  full_join(SquadPlayingTime21_22, by = "Squad") %>%
-  full_join(Squadshooting21_22, by = "Squad") %>%
-  full_join(SquadStandardStats21_22, by = "Squad") %>%
-  select(-X..x, -X90s.x, -X..y, -Mn.MP, -Min., -X90s.y, -Starts, -X..x.x, -X..y.y)
+  natural_join(SquadGoalkeeping21_22, by = "Squad", jointype="FULL") %>%
+  natural_join(SquadPlayingTime21_22, by = "Squad", jointype="FULL") %>%
+  natural_join(Squadshooting21_22, by = "Squad", jointype="FULL") %>%
+  natural_join(SquadStandardStats21_22, by = "Squad", jointype="FULL")
 
+AllStats21_22 <- AllStats21_22[, colSums(is.na(AllStats21_22))<nrow(AllStats21_22)]
 AllStats21_22$Year <- c("21/22")
 
 
 # Final Data
 
-f1 <- full_join(x = AllStats11_12, y = AllStats15_16, by = "Squad")
+Final_Data <-  AllStats21_22 %>%
+  natural_join(AllStats15_16, by = c("Year","Squad"), jointype="FULL") %>%
+  natural_join(AllStats11_12, by = c("Year","Squad"), jointype="FULL") 
 
 
 
