@@ -1,14 +1,17 @@
 # Application
 
+# install.packages("lme4")
+
 # Installing Packages
 library(tidyr)
 library(dplyr)
 library(ggplot2)
 library(rqdatatable)
+library(lme4)
 
 # Loading Data
 #11-12
-RegularSeason11_12 <- read.csv("RegularSeason11_12.csv") %>%
+RegularSeason11_12 <- read.csv("RegularSeason11_12.csv")
 SquadGoalkeeping11_12 <- read.csv("SquadGoalkeeping11_12.csv")
 SquadPlayingTime11_12 <- read.csv("SquadPlayingTime11_12.csv")
 Squadshooting11_12 <- read.csv("Squadshooting11_12.csv")
@@ -48,6 +51,8 @@ AllStats11_12 <- AllStats11_12[-1,]
 
 AllStats11_12$Year <- c("11/12")
 
+AllStats11_12 <- AllStats11_12 %>%
+  select(Year, Age, Ast, Attendance, CrdR, CrdY, CS, CS., D, GF, W, L, Pts.MP, Pts, Gls, Ast, Squad)
 
 #15-16
 AllStats15_16 <- RegularSeason15_16 %>%
@@ -60,6 +65,9 @@ AllStats15_16 <- RegularSeason15_16 %>%
   AllStats15_16 <- AllStats15_16[-1,]
   AllStats15_16$Year <- c("15/16")
 
+  AllStats15_16 <- AllStats15_16 %>%
+    select(Year, Age, Ast, Attendance, CrdR, CrdY, CS, CS., D, GF, W, L, Pts.MP, Pts, Gls, Ast, Squad)
+  
 #21-22
 AllStats21_22 <- RegularSeason21_22 %>%
   natural_join(SquadGoalkeeping21_22, by = "Squad", jointype="FULL") %>%
@@ -70,6 +78,8 @@ AllStats21_22 <- RegularSeason21_22 %>%
 AllStats21_22 <- AllStats21_22[, colSums(is.na(AllStats21_22))<nrow(AllStats21_22)]
 AllStats21_22$Year <- c("21/22")
 
+AllStats21_22 <- AllStats21_22 %>%
+  select(Year, Age, Ast, Attendance, CrdR, CrdY, CS, CS., D, GF, W, L, Pts.MP, Pts, Gls, Ast, Squad)
 
 # Final Data
 
@@ -80,6 +90,9 @@ Final_Data <-  AllStats21_22 %>%
 
 Final_Data <- Final_Data[, colSums(is.na(Final_Data))<nrow(Final_Data)]
 Final_Data <- Final_Data %>% replace(is.na(.), 0)
+
+Final_Data <- Final_Data %>%
+  select(Year, Age, Ast, Attendance, CrdR, CrdY, CS, CS., D, GF, W, L, Pts.MP, Pts, Gls, Ast, Squad)
 
 
 ## Data Normalization 11/12
@@ -181,4 +194,22 @@ AllStats21_22_norm <- numeric_data
 
 # Identifying Norm Rows
 AllStats21_22_norm$Squad <- AllStats21_22$Squad
+
+
+
+## Mixed-Effects Models For Linear Regression
+
+df_Final_Attendance <- data.frame(x = Final_Data$Attendance, y = Final_Data$W, w = Final_Data$Squad)
+
+Attendance_model <- lmer(y ~ x + (1|x), data = df_Final_Attendance)
+
+ggplot(data = df_Final_Attendance, aes(x = x, y = y, color = w)) +
+  geom_count() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(x = "Attendance", y = "Wins")
+
+lm(y ~ x, data = df_Final_Attendance)
+
+
+
 
