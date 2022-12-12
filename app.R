@@ -74,11 +74,108 @@ Final_Data <-  AllStats21_22 %>%
   natural_join(AllStats15_16, by = c("Year","Squad"), jointype="FULL") %>%
   natural_join(AllStats11_12, by = c("Year","Squad"), jointype="FULL") 
 
+
 Final_Data <- Final_Data[, colSums(is.na(Final_Data))<nrow(Final_Data)]
 Final_Data <- Final_Data %>% replace(is.na(.), 0)
 
 
+## Data Normalization 11/12
+
+AllStats11_12_norm <- AllStats11_12
+
+# First, we will identify the numeric columns in the dataset
+numeric_columns <- sapply(AllStats11_12_norm, is.numeric)
+
+# Next, we will create a new data frame that contains only the numeric columns
+numeric_data <- AllStats11_12_norm[, numeric_columns]
+
+# We will then normalize the numeric data by subtracting the minimum value of each column from each value
+# and dividing by the range (maximum value - minimum value) of each column
+normalized_numeric_data <- apply(numeric_data, 2, function(x) {
+  (x - min(x)) / (max(x) - min(x))
+})
+
+# Finally, we will replace the original numeric columns in the dataset with the normalized values
+AllStats11_12_norm[, numeric_columns] <- normalized_numeric_data
+
+# First, we will identify the numeric columns in the dataset
+numeric_columns <- sapply(AllStats11_12_norm, is.numeric)
+
+# Next, we will create a new data frame that contains only the numeric columns
+numeric_data <- AllStats11_12_norm[, numeric_columns]
+
+# Finally, we will replace the original data frame with the new one containing only numeric columns
+AllStats11_12_norm <- numeric_data
+
+# Identifying Norm Rows
+AllStats11_12_norm$Squad <- AllStats11_12$Squad
 
 
+## Data Normalization 15/16
 
+AllStats15_16_norm <- AllStats15_16
+
+# First, we will identify the numeric columns in the dataset
+numeric_columns <- sapply(AllStats15_16_norm, is.numeric)
+
+# Next, we will create a new data frame that contains only the numeric columns
+numeric_data <- AllStats15_16_norm[, numeric_columns]
+
+# We will then normalize the numeric data by subtracting the minimum value of each column from each value
+# and dividing by the range (maximum value - minimum value) of each column
+normalized_numeric_data15_16 <- apply(numeric_data, 2, function(x) {
+  (x - min(x)) / (max(x) - min(x))
+})
+
+# Finally, we will replace the original numeric columns in the dataset with the normalized values
+AllStats15_16_norm[, numeric_columns] <- normalized_numeric_data15_16
+
+# Finally, we will replace the original numeric columns in the dataset with the normalized values
+AllStats15_16_norm[, numeric_columns] <- normalized_numeric_data15_16
+
+# First, we will identify the numeric columns in the dataset
+numeric_columns <- sapply(AllStats15_16_norm, is.numeric)
+
+# Next, we will create a new data frame that contains only the numeric columns
+numeric_data <- AllStats15_16_norm[, numeric_columns]
+
+# Finally, we will replace the original data frame with the new one containing only numeric columns
+AllStats15_16_norm <- numeric_data
+
+# Identifying Norm Rows
+AllStats15_16_norm$Squad <- AllStats15_16$Squad
+
+
+## Data Normalization 21/22
+AllStats21_22_norm <- AllStats21_22
+
+# First, we will identify the numeric columns in the dataset
+numeric_columns <- sapply(AllStats21_22_norm, is.numeric)
+
+# Next, we will create a new data frame that contains only the numeric columns
+numeric_data <- AllStats21_22_norm[, numeric_columns]
+
+# We will then normalize the numeric data by subtracting the minimum value of each column from each value
+# and dividing by the range (maximum value - minimum value) of each column
+normalized_numeric_data21_22 <- apply(numeric_data, 2, function(x) {
+  (x - min(x)) / (max(x) - min(x))
+})
+
+# Finally, we will replace the original numeric columns in the dataset with the normalized values
+AllStats21_22_norm[, numeric_columns] <- normalized_numeric_data21_22
+
+# Finally, we will replace the original numeric columns in the dataset with the normalized values
+AllStats21_22_norm[, numeric_columns] <- normalized_numeric_data21_22
+
+# First, we will identify the numeric columns in the dataset
+numeric_columns <- sapply(AllStats21_22_norm, is.numeric)
+
+# Next, we will create a new data frame that contains only the numeric columns
+numeric_data <- AllStats21_22_norm[, numeric_columns]
+
+# Finally, we will replace the original data frame with the new one containing only numeric columns
+AllStats21_22_norm <- numeric_data
+
+# Identifying Norm Rows
+AllStats21_22_norm$Squad <- AllStats21_22$Squad
 
