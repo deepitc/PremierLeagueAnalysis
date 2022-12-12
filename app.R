@@ -8,11 +8,13 @@ library(rqdatatable)
 
 # Loading Data
 #11-12
-RegularSeason11_12 <- read.csv("RegularSeason11_12.csv")
+RegularSeason11_12 <- read.csv("RegularSeason11_12.csv") %>%
 SquadGoalkeeping11_12 <- read.csv("SquadGoalkeeping11_12.csv")
 SquadPlayingTime11_12 <- read.csv("SquadPlayingTime11_12.csv")
 Squadshooting11_12 <- read.csv("Squadshooting11_12.csv")
 SquadStandardStats11_12 <- read.csv("SquadStandardStats11_12.csv")
+
+SquadStandardStats11_12$Age <- SquadStandardStats11_12$Poss
 
 #15-16
 RegularSeason15_16 <- read.csv("RegularSeason15_16.csv")
@@ -45,6 +47,7 @@ AllStats11_12 <- AllStats11_12[, colSums(is.na(AllStats11_12))<nrow(AllStats11_1
 AllStats11_12 <- AllStats11_12[-1,]
 
 AllStats11_12$Year <- c("11/12")
+
 
 #15-16
 AllStats15_16 <- RegularSeason15_16 %>%
