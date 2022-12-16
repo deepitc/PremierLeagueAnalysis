@@ -1,7 +1,5 @@
 # Application
 
-# install.packages("lme4")
-
 # Installing Packages
 library(tidyr)
 library(dplyr)
@@ -61,13 +59,13 @@ AllStats15_16 <- RegularSeason15_16 %>%
   natural_join(Squadshooting15_16, by = "Squad", jointype="FULL") %>%
   natural_join(SquadStandardStats15_16, by = "Squad", jointype="FULL")
 
-  AllStats15_16 <- AllStats15_16[, colSums(is.na(AllStats15_16))<nrow(AllStats15_16)]
-  AllStats15_16 <- AllStats15_16[-1,]
-  AllStats15_16$Year <- c("15/16")
+AllStats15_16 <- AllStats15_16[, colSums(is.na(AllStats15_16))<nrow(AllStats15_16)]
+AllStats15_16 <- AllStats15_16[-1,]
+AllStats15_16$Year <- c("15/16")
 
-  AllStats15_16 <- AllStats15_16 %>%
-    select(Year, Age, Ast, Attendance, CrdR, CrdY, CS, CS., D, GF, W, L, Pts.MP, Pts, Gls, Ast, Squad)
-  
+AllStats15_16 <- AllStats15_16 %>%
+  select(Year, Age, Ast, Attendance, CrdR, CrdY, CS, CS., D, GF, W, L, Pts.MP, Pts, Gls, Ast, Squad)
+
 #21-22
 AllStats21_22 <- RegularSeason21_22 %>%
   natural_join(SquadGoalkeeping21_22, by = "Squad", jointype="FULL") %>%
@@ -196,20 +194,58 @@ AllStats21_22_norm <- numeric_data
 AllStats21_22_norm$Squad <- AllStats21_22$Squad
 
 
+ui <- fluidPage(
+  
+  # Add a title to the page
+  titlePanel("Soccer Data Analysis"),
+  
+  # Add a main panel for displaying the results
+  mainPanel(
+    column(1,),
+    column(10, plotOutput(outputId = "plot"),
+           paste("It appears that in general, the performance of teams in the Premier 
+            League tends to improve when their attendance increases. However, 
+            there are some exceptions to this trend. One possible explanation 
+            for these discrepancies could be the impact of playing games behind 
+            closed doors in the 2021 season. Due to the COVID-19 pandemic, many 
+            games were played without any spectators, which may have removed the
+            usual home advantage that teams typically experience when playing in
+            front of their own fans. This could have resulted in some teams 
+            performing differently than expected based on their attendance numbers."),
+           br(),br(),
+           verbatimTextOutput(outputId = "regression_results")),
+    column(1,)
+    
+  )
+  
+)
+
 
 ## Mixed-Effects Models For Linear Regression
 
-df_Final_Attendance <- data.frame(x = Final_Data$Attendance, y = Final_Data$W, w = Final_Data$Squad)
+server <- function(input, output) {
+  
+  df_Final_Attendance <- data.frame(x = Final_Data$Attendance, y = Final_Data$W, w = Final_Data$Squad)
+  
+  Attendance_model <- lmer(y ~ x + (1|x), data = df_Final_Attendance)
+  
+  output$plot <- renderPlot({ 
+    ggplot(data = df_Final_Attendance, aes(x = x, y = y, color = w)) +
+      geom_count() +
+      geom_smooth(method = "lm", se = FALSE) +
+      labs(x = "Attendance", y = "Wins")
+  })
+  
+  # Fit mixed effects model
+  model <- reactive({
+    lm(y ~ x, data = df_Final_Attendance)
+  })
+  
+  # Display regression results
+  output$regression_results <- renderText({
+    paste("Fixed effects:", model())})
+  
+}
 
-Attendance_model <- lmer(y ~ x + (1|x), data = df_Final_Attendance)
-
-ggplot(data = df_Final_Attendance, aes(x = x, y = y, color = w)) +
-  geom_count() +
-  geom_smooth(method = "lm", se = FALSE) +
-  labs(x = "Attendance", y = "Wins")
-
-lm(y ~ x, data = df_Final_Attendance)
-
-
-
-
+# Create Shiny app
+shinyApp(ui = ui, server = server)
