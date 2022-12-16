@@ -38,3 +38,5 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 .DS_Store
+rsconnect/shinyapps.io/deepit/Soccer_Analysis.dcf
+Project Report.pdf
